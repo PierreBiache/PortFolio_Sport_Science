@@ -1,0 +1,6 @@
+Project Overview: Ligue 1 Scouting Tool
+This Streamlit application serves as a dynamic scouting and performance analysis tool for Ligue 1 players. Its primary goal is to provide data-driven insights by comparing individual player metrics against the league average and facilitating performance-based talent identification. The application is logically split into two main pages for clear navigation:
+
+Player Profile (Fiche Joueur): This serves as the detailed individual analysis dashboard. Users can select a single player to view their key biographical and physical data, followed by a Radar Chart. This chart uses Min-Max normalization (0-100 scale) to visually assess the player's strengths and weaknesses across several core metrics compared to the Ligue 1 average.
+
+Top Players by Metric Profile (Recherche via Stat): This page is designed for talent identification. It allows users to select multiple statistics and a specific position to generate a dynamic ranking. Players are ranked based on their Average Rank across all selected metrics, enabling quick identification of the top 5 performers matching a specific statistical profile (e.g., best overall ranked midfielders in terms of 'Tackles' and 'Interceptions').
