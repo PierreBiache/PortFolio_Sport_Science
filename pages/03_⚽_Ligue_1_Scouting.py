@@ -3,13 +3,33 @@ import pandas as pd
 import plotly.express as px
 from sklearn.preprocessing import MinMaxScaler
 
+def custom_dummy_metric(label, value):
+    st.markdown(
+        f"""
+        <div style="display: flex; flex-direction: column; margin-bottom: 1rem;">
+            <span style="font-size: 14px; opacity: 0.7;">{label}</span>
+            <span style="font-size: 1.8rem; font-weight: bold; color: #6b7280;">{value}</span>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
 st.title("LIGUE 1 SCOUTING REPORT")
 
 st.markdown("""
-**Project Description:** The following two pages showcase an independent, self-driven project. My primary objective was to gain hands-on experience with Streamlit, a powerful Python framework that enables the rapid development of highly readable and accessible data visualization applications. It bridges the gap between complex backend analysis (such as machine learning) and user-friendly interfaces.
-
-Before having access to proprietary club data, I leveraged publicly available datasets to build a functional scouting tool. This first page allows scouts to select a specific player and benchmark their performance against the league average. The second page operates in reverse: it enables scouts to filter by specific metrics and positions to identify the top 5 matching profiles, allowing them to search for a specific skill set rather than just a known name.
-""")
+<div style="font-size: 1.2rem; line-height: 1.6;">
+    <strong>Project Description:</strong> The following two pages showcase an independent, self-driven project. 
+    My primary objective was to gain hands-on experience with Streamlit, a powerful Python framework that 
+    enables the rapid development of highly readable and accessible data visualization applications. 
+    It bridges the gap between complex backend analysis (such as machine learning) and user-friendly interfaces.
+    <br><br>
+    Before having access to proprietary club data, I leveraged publicly available datasets to build a 
+    functional scouting tool. This first page allows scouts to select a specific player and benchmark 
+    their performance against the league average. The second page operates in reverse: it enables scouts 
+    to filter by specific metrics and positions to identify the top 5 matching profiles, allowing them 
+    to search for a specific skill set rather than just a known name.
+</div>
+""", unsafe_allow_html=True)
 
 st.sidebar.header("Player Selection")
 
@@ -45,8 +65,9 @@ full_data = raw_data.fillna(0)
 full_data['Full_Position'] = full_data['Position'].map(position_mapping)
 
 player_list = full_data["Player"].unique()
+sorted_player_list = sorted(player_list, key=lambda name: str(name).split()[-1].lower())
 
-selected_player = st.sidebar.selectbox('Select a Player to Analyze:', player_list)
+selected_player = st.sidebar.selectbox('Select a Player to Analyze:', sorted_player_list)
 
 player_stats_row = full_data[full_data['Player'] == selected_player]
 
@@ -67,7 +88,7 @@ col_metrics, col_photo = st.columns([4, 1])
 with col_metrics:
     c1, c2, c3, c4 = st.columns(4)
     with c1:
-        st.metric(label="FAVORED FOOT", value="Right")
+        custom_dummy_metric("FAVORED FOOT", "Right")
     with c2:
         st.metric(label="POSITION", value=full_pos)
     with c3:
@@ -77,13 +98,13 @@ with col_metrics:
 
     c5, c6, c7, c8 = st.columns(4)
     with c5:
-        st.metric(label="AGE", value=f"{age} yrs")
+        custom_dummy_metric("AGE", f"{age} yrs")
     with c6:
-        st.metric(label="NATIONALITY", value=nationality)
+        custom_dummy_metric("NATIONALITY", nationality)
     with c7:
-        st.metric(label="HEIGHT", value=f"{height}m")
+        custom_dummy_metric("HEIGHT", f"{height}m")
     with c8:
-        st.metric(label="WEIGHT", value=f"{weight}kg")
+        custom_dummy_metric("WEIGHT", f"{weight}kg")
 
 with col_photo:
     st.markdown(" ")
@@ -114,13 +135,13 @@ st.subheader("Physical & Locomotor Data")
 
 c9, c10, c11, c12 = st.columns([1, 1, 1, 1])
 with c9:
-    st.metric(label="Distance Covered", value="6km")
+    custom_dummy_metric("Distance Covered", "6km")
 with c10:
-    st.metric(label="Max Speed", value="32km/h")
+    custom_dummy_metric("Max Speed", "32km/h")
 with c11:
-    st.metric(label="No. Sprints", value="12")
+    custom_dummy_metric("No. Sprints", "12")
 with c12:
-    st.metric(label="Vertical Jump", value="2m93")
+    custom_dummy_metric("Vertical Jump", "2m93")
 
 st.markdown("---")
 
