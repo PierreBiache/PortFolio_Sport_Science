@@ -24,7 +24,7 @@ st.markdown("""
     It bridges the gap between complex backend analysis (such as machine learning) and user-friendly interfaces.
     <br><br>
     Before having access to proprietary club data, I leveraged publicly available datasets to build a 
-    functional scouting tool. This explain why there is some data missing, I wanted to show what it could look like anyway. This first page allows scouts to select a specific player and benchmark 
+    functional scouting tool. This explain why there is some data missing. I wanted to show what it could look like anyway, so fake data is colored in a different way. This first page allows scouts to select a specific player and benchmark 
     their performance against the league average. The second page operates in reverse: it enables scouts 
     to filter by specific metrics and positions to identify the top 5 matching profiles, allowing them 
     to search for a specific skill set rather than just a known name.
