@@ -4,13 +4,24 @@ import numpy as np
 import plotly.express as px
 import os
 
-st.title(" College Basketball Computer Vision Tracking Data Analysis")
+st.title("College Basketball Computer Vision Tracking Data Analysis")
 
 st.markdown("""
-**Project Description:** This analysis was conducted during my internship at Stats Perform. The goal was to gain firsthand experience with computer vision tracking data, which is rapidly developing across multiple sports and becoming more precise than traditional GPS data. Using historical game data from Indiana University (USA), I aimed to create meaningful analyses and visualizations to make this initial experience highly rewarding. 
+<div style="font-size: 1.2rem; line-height: 1.6;">
+    <strong>Project Description:</strong> This analysis was conducted during my internship at Stats Perform. 
+    The goal was to gain firsthand experience with computer vision tracking data, which is rapidly developing 
+    across multiple sports and becoming more precise than traditional GPS data. Using historical game data 
+    from Indiana University (USA), I aimed to create meaningful analyses and visualizations to make this 
+    initial experience highly rewarding. 
+    <br><br>
+    I developed a dashboard to observe key tracking metrics, such as distance covered, movement speed, 
+    and the percentage of time each player spent in different speed zones per game. Additionally, a spatial 
+    chart visualizes the specific locations of different run types on the court, highlighting how often a 
+    player hits maximum speed, particularly during fast breaks.
+</div>
+""", unsafe_allow_html=True)
 
-I developed a dashboard to observe key tracking metrics, such as distance covered, movement speed, and the percentage of time each player spent in different speed zones per game. Additionally, a spatial chart visualizes the specific locations of different run types on the court, highlighting how often a player hits maximum speed, particularly during fast breaks.
-""")
+st.divider()
 
 @st.cache_data
 def load_production_data():
@@ -92,19 +103,27 @@ def get_player_trajectory(game_id, player_id):
 
 st.header("Tracking Data Performance Dashboard")
 
+# --- FILTERS ---
 filter_col1, filter_col2, filter_col3 = st.columns(3)
 
 with filter_col1:
     selected_name = st.selectbox("Select Player", ["ALL"] + sorted(df_metrics['NAME'].dropna().unique()))
 
 with filter_col2:
-    selected_game = st.selectbox("Select Game ID", ["ALL"] + sorted(df_metrics['GAME'].astype(str).unique()))
+    # Update available games based on player selection
+    if selected_name != "ALL":
+        available_games = sorted(df_metrics[df_metrics['NAME'] == selected_name]['GAME'].astype(str).unique())
+    else:
+        available_games = sorted(df_metrics['GAME'].astype(str).unique())
+        
+    selected_game = st.selectbox("Select Game ID", ["ALL"] + available_games)
 
 with filter_col3:
     status_map = {"Global": 0, "Offense": 1, "Defense": 2}
     selected_status_label = st.selectbox("Select Phase", list(status_map.keys()))
     selected_status = status_map[selected_status_label]
 
+# --- DATA FILTERING ---
 filtered_df = df_metrics.copy()
 
 if selected_name != "ALL":
@@ -118,16 +137,51 @@ filtered_df = filtered_df[filtered_df['OFF_DEF_STATUS'] == selected_status]
 if filtered_df.empty:
     st.warning("No data found for the selected filters.")
 else:
-    st.dataframe(filtered_df, use_container_width=True)
+    # --- TABLE FORMATTING ---
+    display_df = filtered_df.copy()
     
+    # 1. Force NAME to be the first column
+    cols = ['NAME'] + [col for col in display_df.columns if col != 'NAME']
+    display_df = display_df[cols]
+    
+    # 2. Rename TOTAL_DISTANCE to include units
+    if 'TOTAL_DISTANCE' in display_df.columns:
+        display_df.rename(columns={'TOTAL_DISTANCE': 'TOTAL_DISTANCE (Miles)'}, inplace=True)
+        
+    # 3. Format percentage columns (assuming they contain '%' in their name and are decimals like 0.15)
+    pct_cols = [col for col in display_df.columns if '%' in col]
+    format_dict = {col: "{:.1%}" for col in pct_cols}
+    
+    # Display styled dataframe
+    st.dataframe(display_df.style.format(format_dict), use_container_width=True)
+    
+    # --- BAR CHART (FIRST GAME ONLY) ---
     if selected_name != "ALL":
+        # Get the first game of the filtered list
+        first_game = sorted(filtered_df['GAME'].unique())[0]
+        bar_data = filtered_df[filtered_df['GAME'] == first_game]
+        
         st.subheader(f"Time Intensity Distribution: {selected_name}")
+        st.write(f"*Displaying data for the first available game (ID: {first_game})*")
+        
         metrics_cols = ['WALK_TIME%', 'JOG_TIME%', 'RUN_TIME%', 'SPRINT_TIME%', 'MAXSPEED_TIME%']
-        st.bar_chart(filtered_df[metrics_cols].T)
+        # Extract only the percentage columns for the bar chart
+        if not bar_data.empty:
+            st.bar_chart(bar_data[metrics_cols].T)
 
 st.markdown("---")
-st.subheader("Sample Spatial Movement Map")
-st.write("Displaying raw tracking trajectory for Player ID: 1076247 during Game: 2175533.")
+st.subheader("Spatial Movement Map")
+
+st.markdown("""
+<div style="font-size: 1.2rem; line-height: 1.6; margin-bottom: 20px;">
+    Displaying a raw tracking trajectory example for one specific player during a single game. 
+    <br><br>
+    <em><strong>Note:</strong> The decision was made to showcase only a single representative example. 
+    Importing and processing the raw optical tracking dataset (which records spatial coordinates 
+    at 25 frames per second) for every single game dynamically would require significant computational 
+    power and drastically slow down the application's loading time.</em>
+</div>
+""", unsafe_allow_html=True)
 
 target_game_id = "2175533"
 target_player_id = 1076247
@@ -150,14 +204,18 @@ with st.spinner('Loading raw tracking data and generating spatial map...'):
             y='Y_POSITION',
             color='ZONE',
             color_discrete_map=intensity_colors,
-            title=f"Court Movement Map - Player ID: {target_player_id} (Game: {target_game_id})",
+            title=f"Sample Court Movement Map - Single Player Example (Game ID: {target_game_id})",
             opacity=0.6,
         )
         
         fig.update_layout(
             yaxis=dict(scaleanchor="x", scaleratio=1),
             plot_bgcolor='rgba(240, 240, 240, 0.8)',
-            legend_title_text='Intensity Zone'
+            legend=dict(
+                title_text='Intensity Zone',
+                font=dict(size=16)  # Legend text size increased
+            ),
+            title=dict(font=dict(size=20))
         )
         
         st.plotly_chart(fig, use_container_width=True)
