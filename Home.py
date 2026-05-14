@@ -1,4 +1,5 @@
 import streamlit as st
+import streamlit.components.v1 as components
 from streamlit_pdf_viewer import pdf_viewer
 
 st.set_page_config(
@@ -34,9 +35,19 @@ st.markdown("""
     <br><br>
     Finally, I designed the report to be accessible to players and coaches without a data background, while remaining analytical enough for the sports science staff. 
     <br><br>
-    <em><strong>Note:</strong> For reasons of data privacy and practicality, only screenshots of the Power BI report are displayed, with player names and specific analyzed categories carefully redacted.</em>
+    <em><strong>Note:</strong> For reasons of data privacy, an interactive but fully anonymized version of the Power BI report is displayed below, with player names and specific analyzed categories carefully redacted.</em>
 </div>
 """, unsafe_allow_html=True)
+
+power_bi_url = "<iframe title="MatchReport_PortFolio" width="600" height="373.5" src="https://app.powerbi.com/view?r=eyJrIjoiMmY0NjdlZDItMWM1ZS00MzdkLWE4NmItMTA4ZTc1YzhjMzc5IiwidCI6Ijg5M2FiY2JhLTNiYzItNDY2ZC05ODBkLTEyNGVmNGFlYjBkNyIsImMiOjl9" frameborder="0" allowFullScreen="true"></iframe>"
+
+power_bi_iframe = f"""
+<iframe title="Power BI Report" width="100%" height="600" src="{power_bi_url}" frameborder="0" allowFullScreen="true"></iframe>
+"""
+
+components.html(power_bi_iframe, height=600)
+
+st.divider()
 
 pdf_path = "Documents/MatchReport_PowerBi.pdf"
 
