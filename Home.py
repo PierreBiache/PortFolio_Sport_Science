@@ -1,6 +1,5 @@
 import streamlit as st
 import streamlit.components.v1 as components
-from streamlit_pdf_viewer import pdf_viewer
 
 st.set_page_config(
     page_title="Pierre Biache | Portfolio",
@@ -59,6 +58,5 @@ try:
             file_name="MatchReport_PowerBi.pdf",
             mime="application/pdf"
         )
-    pdf_viewer(pdf_path)
 except FileNotFoundError:
     st.error("PDF not found. Please check the Documents folder.")
