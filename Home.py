@@ -39,7 +39,7 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-power_bi_url = "<iframe title="MatchReport_PortFolio" width="600" height="373.5" src="https://app.powerbi.com/view?r=eyJrIjoiMmY0NjdlZDItMWM1ZS00MzdkLWE4NmItMTA4ZTc1YzhjMzc5IiwidCI6Ijg5M2FiY2JhLTNiYzItNDY2ZC05ODBkLTEyNGVmNGFlYjBkNyIsImMiOjl9" frameborder="0" allowFullScreen="true"></iframe>"
+power_bi_url = "https://app.powerbi.com/view?r=eyJrIjoiMmY0NjdlZDItMWM1ZS00MzdkLWE4NmItMTA4ZTc1YzhjMzc5IiwidCI6Ijg5M2FiY2JhLTNiYzItNDY2ZC05ODBkLTEyNGVmNGFlYjBkNyIsImMiOjl9"
 
 power_bi_iframe = f"""
 <iframe title="Power BI Report" width="100%" height="600" src="{power_bi_url}" frameborder="0" allowFullScreen="true"></iframe>
